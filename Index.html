@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+<!-- Prevent Google indexing (optional safe privacy) -->
+<meta name="robots" content="noindex, nofollow">
+
+<title>Daily Rosary Mystery</title>
+
+<style>
+  body {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+    background: white;
+    overflow: hidden;
+  }
+
+  /* Main App */
+  #app {
+    width: 100vw;
+    height: 100vh;
+    background: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    text-align: center;
+    padding: 20px;
+    box-sizing: border-box;
+  }
+
+  h1 {
+    font-size: 32px;
+    margin-bottom: 15px;
+    color: black;
+  }
+
+  p {
+    font-size: 20px;
+    color: black;
+    max-width: 90%;
+  }
+
+  /* Button */
+  button {
+    margin-top: 40px;
+    padding: 16px 40px;
+    font-size: 20px;
+    border: none;
+    border-radius: 14px;
+    background: black;
+    color: white;
+    cursor: pointer;
+  }
+
+  /* Check Animation */
+  .checkmark {
+    font-size: 90px;
+    margin: 20px 0;
+    animation: pulse 1s infinite alternate;
+  }
+
+  @keyframes pulse {
+    from { transform: scale(1); }
+    to   { transform: scale(1.3); }
+  }
+
+  /* Lock Screen */
+  #lockScreen {
+    position: fixed;
+    inset: 0;
+    background: black;
+    color: white;
+    display: none;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    z-index: 99999;
+    text-align: center;
+  }
+
+  #lockScreen h1 {
+    font-size: 40px;
+    color: white;
+  }
+
+  #lockScreen p {
+    color: #ddd;
+    font-size: 18px;
+    margin-top: 10px;
+  }
+</style>
+</head>
+
+<body>
+
+<!-- APP -->
+<div id="app"></div>
+
+<!-- LOCK SCREEN -->
+<div id="lockScreen">
+  <h1>🔒 SITE LOCKED</h1>
+  <p>Unlocks automatically at 12:00 AM</p>
+</div>
+
+<script>
+(function(){
+
+  const app = document.getElementById("app");
+  const lockScreen = document.getElementById("lockScreen");
+
+  /* ✅ Lock System Persistent */
+  function checkLock() {
+    const unlockTime = localStorage.getItem("rosaryUnlockTime");
+    if (!unlockTime) return false;
+
+    return new Date() < new Date(unlockTime);
+  }
+
+  function showLockScreen() {
+    lockScreen.style.display = "flex";
+    app.style.display = "none";
+  }
+
+  function lockUntilMidnight() {
+    const now = new Date();
+    const midnight = new Date();
+    midnight.setHours(24, 0, 0, 0);
+
+    // Save unlock time
+    localStorage.setItem("rosaryUnlockTime", midnight.toISOString());
+
+    showLockScreen();
+
+    // Auto unlock at midnight
+    setTimeout(() => {
+      localStorage.removeItem("rosaryUnlockTime");
+      location.reload();
+    }, midnight - now);
+  }
+
+  /* ✅ If Already Locked (Refresh Protection) */
+  if (checkLock()) {
+    showLockScreen();
+    return;
+  }
+
+  /* ✅ Pages Setup */
+  const pages = [
+    { text: "This is your first mystery reflection...", btn: "1st Mystery" },
+    { text: "This is your second mystery reflection...", btn: "2nd Mystery" },
+    { text: "This is your third mystery reflection...", btn: "3rd Mystery" },
+    { text: "This is your fourth mystery reflection...", btn: "4th Mystery" },
+    { text: "This is your fifth mystery reflection...", btn: "5th Mystery" },
+    { text: "Continue forward in devotion...", btn: "Continue" },
+    { text: "Almost finished with today's rosary...", btn: "Last Page" },
+    { text: "Final step before completion...", btn: "Finish" }
+  ];
+
+  let currentPage = 0;
+
+  /* ✅ Render Page */
+  function renderPage() {
+    app.innerHTML = `
+      <h1>Page ${currentPage + 1}</h1>
+      <p>${pages[currentPage].text}</p>
+      <button id="nextBtn">${pages[currentPage].btn}</button>
+    `;
+
+    document.getElementById("nextBtn").onclick = nextPage;
+  }
+
+  /* ✅ Next Page */
+  function nextPage() {
+    currentPage++;
+
+    if (currentPage < pages.length) {
+      renderPage();
+    } else {
+      showFinalPage();
+    }
+  }
+
+  /* ✅ Final Congratulations Page */
+  function showFinalPage() {
+    app.innerHTML = `
+      <h1>🎉 Congratulations Aleena!</h1>
+      <p>You've completed today's rosary successfully.</p>
+      <div class="checkmark">✔</div>
+      <p style="color:red;">Locking site in 5 seconds...</p>
+    `;
+
+    setTimeout(lockUntilMidnight, 5000);
+  }
+
+  /* ✅ Start */
+  renderPage();
+
+})();
+</script>
+
+</body>
+</html>
