@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+<meta name="robots" content="noindex, nofollow">
+
+<title>Daily Rosary Mystery</title>
+
+<style>
+  body {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+    background: white;
+  }
+
+  /* ✅ Main App Layout */
+  #app {
+    width: 100vw;
+    height: 100vh;
+    background: white;
+
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* ✅ Scrollable Content Area */
+  #content {
+    flex: 1;
+    overflow-y: auto;
+    padding: 25px;
+    box-sizing: border-box;
+    text-align: center;
+  }
+
+  h1 {
+    font-size: 32px;
+    margin-bottom: 15px;
+    color: black;
+  }
+
+  p {
+    font-size: 20px;
+    color: black;
+    line-height: 1.6;
+    max-width: 95%;
+    margin: auto;
+  }
+
+  /* ✅ Fixed Bottom Button Bar */
+  #buttonBar {
+    width: 100%;
+    padding: 15px;
+    box-sizing: border-box;
+    background: white;
+    border-top: 1px solid #ddd;
+
+    position: sticky;
+    bottom: 0;
+    text-align: center;
+  }
+
+  button {
+    padding: 16px 45px;
+    font-size: 20px;
+    border: none;
+    border-radius: 14px;
+    background: black;
+    color: white;
+    cursor: pointer;
+  }
+
+  /* ✅ Check Animation */
+  .checkmark {
+    font-size: 90px;
+    margin: 25px 0;
+    animation: pulse 1s infinite alternate;
+  }
+
+  @keyframes pulse {
+    from { transform: scale(1); }
+    to   { transform: scale(1.3); }
+  }
+
+  /* ✅ Lock Screen */
+  #lockScreen {
+    position: fixed;
+    inset: 0;
+    background: black;
+    color: white;
+    display: none;
+
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+
+    z-index: 99999;
+    text-align: center;
+  }
+
+  #lockScreen h1 {
+    font-size: 40px;
+    color: white;
+  }
+
+  #lockScreen p {
+    color: #ddd;
+    font-size: 18px;
+    margin-top: 10px;
+  }
+</style>
+</head>
+
+<body>
+
+<!-- ✅ APP -->
+<div id="app">
+  <div id="content"></div>
+
+  <div id="buttonBar">
+    <button id="nextBtn"></button>
+  </div>
+</div>
+
+<!-- ✅ LOCK SCREEN -->
+<div id="lockScreen">
+  <h1>🔒 SITE LOCKED</h1>
+  <p>Unlocks automatically at 12:00 AM</p>
+</div>
+
+<script>
+(function(){
+
+  const content = document.getElementById("content");
+  const nextBtn = document.getElementById("nextBtn");
+  const lockScreen = document.getElementById("lockScreen");
+  const appBox = document.getElementById("app");
+
+  /* ✅ Lock System Persistent */
+  function checkLock() {
+    const unlockTime = localStorage.getItem("rosaryUnlockTime");
+    if (!unlockTime) return false;
+    return new Date() < new Date(unlockTime);
+  }
+
+  function showLockScreen() {
+    lockScreen.style.display = "flex";
+    appBox.style.display = "none";
+  }
+
+  function lockUntilMidnight() {
+    const now = new Date();
+    const midnight = new Date();
+    midnight.setHours(24, 0, 0, 0);
+
+    localStorage.setItem("rosaryUnlockTime", midnight.toISOString());
+
+    showLockScreen();
+
+    setTimeout(() => {
+      localStorage.removeItem("rosaryUnlockTime");
+      location.reload();
+    }, midnight - now);
+  }
+
+  /* ✅ If already locked */
+  if (checkLock()) {
+    showLockScreen();
+    return;
+  }
+
+  /* ✅ Pages Data */
+  const pages = [
+    { text: "This is your first mystery reflection... (Long text can go here freely. Scroll will work properly.)", btn: "1st Mystery" },
+    { text: "This is your second mystery reflection...", btn: "2nd Mystery" },
+    { text: "This is your third mystery reflection...", btn: "3rd Mystery" },
+    { text: "This is your fourth mystery reflection...", btn: "4th Mystery" },
+    { text: "This is your fifth mystery reflection...", btn: "5th Mystery" },
+    { text: "Continue forward in devotion...", btn: "Continue" },
+    { text: "Almost finished with today's rosary...", btn: "Last Page" },
+    { text: "Final step before completion...", btn: "Finish" }
+  ];
+
+  let currentPage = 0;
+
+  /* ✅ Render Page */
+  function renderPage() {
+    content.scrollTop = 0;
+
+    content.innerHTML = `
+      <h1>Page ${currentPage + 1}</h1>
+      <p>${pages[currentPage].text}</p>
+    `;
+
+    nextBtn.innerText = pages[currentPage].btn;
+    nextBtn.onclick = nextPage;
+  }
+
+  /* ✅ Next Page */
+  function nextPage() {
+    currentPage++;
+
+    if (currentPage < pages.length) {
+      renderPage();
+    } else {
+      showFinalPage();
+    }
+  }
+
+  /* ✅ Final Page */
+  function showFinalPage() {
+    content.innerHTML = `
+      <h1>🎉 Congratulations Aleena!</h1>
+      <p>You've completed today's rosary successfully.</p>
+      <div class="checkmark">✔</div>
+      <p style="color:red;">Locking site in 5 seconds...</p>
+    `;
+
+    nextBtn.style.display = "none";
+
+    setTimeout(lockUntilMidnight, 5000);
+  }
+
+  /* ✅ Start */
+  renderPage();
+
+})();
+</script>
+
+</body>
+</html>
