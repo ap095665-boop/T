@@ -24,20 +24,27 @@
 
 <!-- ✅ FULL STYLE -->
 <style>
-  /* ✅ Bottom Button */
+  /* ✅ Bigger Bottom Button */
   #openCounterBtn {
     position: fixed;
-    bottom: 15px;
+    bottom: 18px;
     left: 50%;
     transform: translateX(-50%);
-    padding: 14px 24px;
-    font-size: 16px;
+
+    padding: 18px 34px;      
+    font-size: 18px;         
+    font-weight: bold;
+
     border: none;
-    border-radius: 30px;
+    border-radius: 40px;
+
     background: black;
     color: white;
+
     z-index: 9999;
     cursor: pointer;
+
+    box-shadow: 0 6px 18px rgba(0,0,0,0.35);
   }
 
   /* ✅ Popup Full Screen */
@@ -69,8 +76,8 @@
 
   /* ✅ Big Touch Circle */
   #bigCounterCircle {
-    width: 230px;
-    height: 230px;
+    width: 240px;
+    height: 240px;
     border-radius: 50%;
     background: white;
 
@@ -79,7 +86,7 @@
     align-items: center;
     flex-direction: column;
 
-    font-size: 65px;
+    font-size: 70px;
     font-weight: bold;
     color: black;
 
@@ -140,7 +147,7 @@
 
     /* ✅ Vibration Tap Feedback */
     if ("vibrate" in navigator) {
-      navigator.vibrate(50);
+      navigator.vibrate(55);
     }
 
     /* ✅ Increase Count */
@@ -148,14 +155,15 @@
     countText.textContent = count;
 
 
-    /* ✅ If 10 Beads Completed */
+    /* ✅ Auto Close After 10 */
     if (count === 10) {
 
       /* ✅ Strong Completion Vibration */
       navigator.vibrate([150, 70, 150]);
 
-      /* ✅ Auto Close Popup After 10 */
       setTimeout(() => {
+
+        /* ✅ Close Popup */
         screen.style.display = "none";
 
         /* ✅ Reset Counter */
