@@ -1,81 +1,112 @@
-<!-- ✅ Rosary Bead Counter Bar -->
-<div id="beadBar">
-  <div id="beads">
+<!-- ✅ Bottom Button -->
+<button id="openCounterBtn">
+  📿 Bead Counter
+</button>
 
-    <!-- ✅ 10 Beads -->
-    <span class="bead"></span>
-    <span class="bead"></span>
-    <span class="bead"></span>
-    <span class="bead"></span>
-    <span class="bead"></span>
-    <span class="bead"></span>
-    <span class="bead"></span>
-    <span class="bead"></span>
-    <span class="bead"></span>
-    <span class="bead"></span>
 
+<!-- ✅ Full Popup Counter Screen -->
+<div id="counterScreen">
+
+  <!-- ✅ Close Button -->
+  <button id="closeCounterBtn">✖</button>
+
+  <!-- ✅ Big Circle Counter -->
+  <div id="bigCounterCircle">
+    <span id="bigCountText">0</span>
+    <p>/ 10</p>
   </div>
-</div>
 
+  <!-- ✅ Hint Text -->
+  <p id="tapHint">Tap the circle to count beads</p>
 
-<!-- ✅ Popup Counter Display -->
-<div id="counterPopup">
-  Beads: <span id="countNumber">0</span> / 10
 </div>
 
 
 <!-- ✅ FULL STYLE -->
 <style>
-  /* ✅ Bottom Bead Bar */
-  #beadBar {
+  /* ✅ Bottom Button */
+  #openCounterBtn {
     position: fixed;
-    bottom: 0;
-    left: 0;
-    width: 100%;
+    bottom: 15px;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 14px 24px;
+    font-size: 16px;
+    border: none;
+    border-radius: 30px;
+    background: black;
+    color: white;
+    z-index: 9999;
+    cursor: pointer;
+  }
+
+  /* ✅ Popup Full Screen */
+  #counterScreen {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.9);
+    z-index: 10000;
+
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+  }
+
+  /* ✅ Close Button Top Right */
+  #closeCounterBtn {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    font-size: 20px;
+    padding: 10px 14px;
+    border: none;
+    border-radius: 50%;
     background: white;
-    padding: 12px;
+    color: black;
+    cursor: pointer;
+  }
+
+  /* ✅ Big Touch Circle */
+  #bigCounterCircle {
+    width: 230px;
+    height: 230px;
+    border-radius: 50%;
+    background: white;
+
     display: flex;
     justify-content: center;
-    border-top: 1px solid #ddd;
-    z-index: 9999;
-  }
+    align-items: center;
+    flex-direction: column;
 
-  /* ✅ Beads Container */
-  #beads {
-    display: flex;
-    gap: 10px;
-  }
+    font-size: 65px;
+    font-weight: bold;
+    color: black;
 
-  /* ✅ Bead Style */
-  .bead {
-    width: 18px;
-    height: 18px;
-    background: #bbb;
-    border-radius: 50%;
     cursor: pointer;
+    user-select: none;
+
     transition: 0.2s;
   }
 
-  /* ✅ Completed Bead */
-  .bead.active {
-    background: black;
-    transform: scale(1.15);
+  /* ✅ Tap Effect */
+  #bigCounterCircle:active {
+    transform: scale(0.94);
   }
 
-  /* ✅ Popup Counter */
-  #counterPopup {
-    position: fixed;
-    bottom: 75px;
-    left: 50%;
-    transform: translateX(-50%);
-    background: black;
-    color: white;
-    padding: 10px 18px;
-    border-radius: 14px;
+  /* ✅ /10 Text */
+  #bigCounterCircle p {
+    font-size: 18px;
+    margin: 0;
+    opacity: 0.6;
+  }
+
+  /* ✅ Hint Text */
+  #tapHint {
+    margin-top: 25px;
     font-size: 15px;
-    display: none;
-    z-index: 9999;
-    box-shadow: 0 5px 20px rgba(0,0,0,0.3);
+    color: white;
+    opacity: 0.75;
   }
 </style>
 
@@ -84,50 +115,55 @@
 <script>
   let count = 0;
 
-  const beads = document.querySelectorAll(".bead");
-  const popup = document.getElementById("counterPopup");
-  const countNumber = document.getElementById("countNumber");
+  const openBtn = document.getElementById("openCounterBtn");
+  const screen = document.getElementById("counterScreen");
+  const closeBtn = document.getElementById("closeCounterBtn");
 
-  beads.forEach((bead) => {
+  const circle = document.getElementById("bigCounterCircle");
+  const countText = document.getElementById("bigCountText");
 
-    bead.addEventListener("click", () => {
 
-      /* ✅ Vibration Tap Feedback */
-      if ("vibrate" in navigator) {
-        navigator.vibrate(40); // small tap vibration
-      }
+  /* ✅ Open Counter Popup */
+  openBtn.addEventListener("click", () => {
+    screen.style.display = "flex";
+  });
 
-      /* ✅ Increase Count */
-      count++;
 
-      /* ✅ Activate Bead */
-      bead.classList.add("active");
+  /* ✅ Close Popup Manually */
+  closeBtn.addEventListener("click", () => {
+    screen.style.display = "none";
+  });
 
-      /* ✅ Update Popup Counter */
-      countNumber.textContent = count;
 
-      /* ✅ Show Popup */
-      popup.style.display = "block";
+  /* ✅ Tap Circle to Count Beads */
+  circle.addEventListener("click", () => {
 
-      /* ✅ Auto Hide Popup */
+    /* ✅ Vibration Tap Feedback */
+    if ("vibrate" in navigator) {
+      navigator.vibrate(50);
+    }
+
+    /* ✅ Increase Count */
+    count++;
+    countText.textContent = count;
+
+
+    /* ✅ If 10 Beads Completed */
+    if (count === 10) {
+
+      /* ✅ Strong Completion Vibration */
+      navigator.vibrate([150, 70, 150]);
+
+      /* ✅ Auto Close Popup After 10 */
       setTimeout(() => {
-        popup.style.display = "none";
-      }, 1200);
+        screen.style.display = "none";
 
-      /* ✅ Reset After 10 Beads */
-      if (count === 10) {
+        /* ✅ Reset Counter */
+        count = 0;
+        countText.textContent = count;
 
-        /* ✅ Strong Completion Vibration */
-        navigator.vibrate([120, 60, 120]);
-
-        setTimeout(() => {
-          beads.forEach(b => b.classList.remove("active"));
-          count = 0;
-          countNumber.textContent = count;
-        }, 900);
-      }
-
-    });
+      }, 700);
+    }
 
   });
 </script>
